@@ -704,14 +704,14 @@ $("#photoInput").addEventListener("change",async e=>{
   try{await storePhoto(c,file,photoSide);scheduleSave("cat");render();if(openId===c.id)openDetail(c.id);toast(photoSide==="b"?"뒷면 사진을 넣었어요":"앞면 사진을 넣었어요")}
   catch(err){toast(photoErr(err))}
 });
-function fileKey(s){return String(s||"").replace(/\.[^.]+$/,"").trim().toLowerCase().replace(/[\s_]+/g,"-")}
+function fileKey(s){return String(s||"").normalize("NFC").replace(/\.[^.]+$/,"").trim().toLowerCase().replace(/[\s_]+/g,"-")}
 $("#bulkInput").addEventListener("change",async e=>{
   const files=[...e.target.files]; e.target.value=""; if(!files.length)return;
   if(dMore.open)dMore.close();
   const byNo={},byName={};
   S.cards.forEach(c=>{if(c.no){byNo[fileKey(c.no)]=c;byNo[fileKey(dispNo(c))]=c;if(!byNo[fileKey(baseNo(c.no))])byNo[fileKey(baseNo(c.no))]=c} byName[fileKey(c.name)]=c});
   const pairs=[],miss=[];
-  files.forEach(f=>{let k=fileKey(f.name),side="f";const m=k.match(/^(.*?)-?(뒷면|뒤|back|b)$/);
+  files.forEach(f=>{let k=fileKey(f.name),side="f";const m=k.match(/^(.*?)-?(뒷면|뒷장|후면|뒤|back|b)$/);
     if(!(byNo[k]||byName[k])&&m&&(byNo[m[1]]||byName[m[1]])){k=m[1];side="b"}
     const c=byNo[k]||byName[k];c?pairs.push([f,c,side]):miss.push(f.name)});
   if(!pairs.length){toast("카드 번호나 이름과 같은 파일 이름이 없어요. 파일 이름을 카드 번호로 바꿔 주세요");return}
